@@ -1284,9 +1284,10 @@ function setRevealFocus(index, instant){
   live.textContent='Đang xem '+boxOf(S.focusGroup).title;
 }
 function paintCarousel(x){
-  var max=S.cards.length-1;
+  var max=S.cards.length-1,previous=S.focusGroup;
   S.carouselX=clamp(x,0,max);
   S.focusGroup=Math.round(S.carouselX);
+  if(S.focusGroup!==previous)AudioFX.play('snap');
   elGroups.classList.add('is-dragging');
   S.cards.forEach(function(card,i){
     var off=i-S.carouselX;
@@ -1300,7 +1301,7 @@ function snapCarousel(target){
   target=clamp(Math.round(target),0,max);
   if(carouselAnim){cancelAnimationFrame(carouselAnim);carouselAnim=0;}
   elGroups.classList.add('is-dragging');
-  var from=S.carouselX, announce=target!==Math.round(from), t0=performance.now(), dur=reduced?1:520;
+  var from=S.carouselX, t0=performance.now(), dur=reduced?1:520;
   (function tick(now){
     var p=Math.min(1,(now-t0)/dur);
     var e=1-Math.pow(1-p,3);
@@ -1310,7 +1311,6 @@ function snapCarousel(target){
       carouselAnim=0;
       elGroups.classList.remove('is-dragging');
       setRevealFocus(target);
-      if(announce)AudioFX.play('snap');
     }
   })(t0);
 }
